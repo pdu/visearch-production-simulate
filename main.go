@@ -13,9 +13,9 @@ import (
 
 // User is the APP's credential
 type User struct {
-	username string `json:"username"`
-	access   string `json:"access"`
-	secret   string `json:"secret"`
+	Username string `json:"username"`
+	Access   string `json:"access"`
+	Secret   string `json:"secret"`
 }
 
 // Users is the slice of User
@@ -38,8 +38,8 @@ func loadCreds() {
 
 func getCred(username string) (string, string, error) {
 	for _, user := range users {
-		if user.username == username {
-			return user.access, user.secret, nil
+		if user.Username == username {
+			return user.Access, user.Secret, nil
 		}
 	}
 	return "", "", errors.Newf("Credential not found for %v", username)
@@ -56,6 +56,8 @@ func main() {
 		log.Printf("parseFiles failed,files:%v err:%v\n", files, err)
 		os.Exit(1)
 	}
+
+	log.Println("begin playback")
 
 	playback(requests)
 }
