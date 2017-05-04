@@ -46,11 +46,13 @@ func playback(reqs Requests) {
 			wg.Add(1)
 
 			go func(req *Request) {
-				wg.Done()
+				defer wg.Done()
 
 				err := searchCall(req)
 				if err != nil {
 					log.Printf("searchCall failed,err:%v\n", err)
+				} else {
+					log.Printf("searchCall ok,req:%v\n", req)
 				}
 
 			}(reqs[id])
