@@ -24,45 +24,42 @@ func searchCall(req *Request) error {
 	httpReq.SetBasicAuth(access, secret)
 
 	client := &http.Client{}
-	_, err = client.Do(httpReq)
+	resp, err := client.Do(httpReq)
 	if err != nil {
 		return errors.Wrap(err, "Do http request fail")
 	}
+	resp.Body.Close()
 
 	return nil
 }
 
 func playback(reqs Requests) {
 	id := 0
-	now := time.Now()
-	c := time.Tick(time.Millisecond)
+
+	c := time.Tick(time.Millisecond * time.Duration(1000 / *qps))
+
 	var wg sync.WaitGroup
 
-	for current := range c {
-
-		past := current.Sub(now)
-
-		for id < len(reqs) && reqs[id].t.Sub(reqs[0].t) <= past {
-			wg.Add(1)
-
-			go func(req *Request) {
-				defer wg.Done()
-
-				err := searchCall(req)
-				if err != nil {
-					log.Printf("searchCall failed,err:%v\n", err)
-				} else {
-					log.Printf("searchCall ok,req:%v\n", req)
-				}
-
-			}(reqs[id])
-
-			id++
-		}
+	for range c {
 
 		if id >= len(reqs) {
 			break
 		}
+		wg.Add(1)
+
+		go func(req *Request) {
+			defer wg.Done()
+
+			err := searchCall(req)
+			if err != nil {
+				log.Printf("searchCall failed,err:%v\n", err)
+			} else {
+				log.Printf("searchCall ok,req:%v\n", req)
+			}
+
+		}(reqs[id])
+
+		id++
 	}
 
 	wg.Wait()

@@ -103,6 +103,10 @@ func parseLine(line string) (*Request, bool) {
 	param := parts[12][7 : len(parts[12])-1]
 	// fmt.Println(t, method, username, param)
 
+	if username != "Interpark@fashion_live" || method != "search" {
+		return nil, false
+	}
+
 	return &Request{
 		t:        t,
 		method:   method,

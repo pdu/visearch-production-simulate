@@ -25,6 +25,7 @@ var users Users
 
 var host = flag.String("host", "http://visearch.visenze.com/", "The search endpoint")
 var filenames = flag.String("files", "", "The playback logs, multiple log files separated by comma")
+var qps = flag.Int("qps", 20, "The QPS of the load")
 
 func loadCreds() {
 	file, err := ioutil.ReadFile("./creds.json")
